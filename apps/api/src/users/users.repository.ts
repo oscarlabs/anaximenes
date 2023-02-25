@@ -23,7 +23,11 @@ export class UsersRepository {
   }
 
   async findByEmail(email: string): Promise<User> {
-    const user = User.findOne({ where: { email: email } });
-    return user;
+    try {
+      const user = await User.findOne({ where: { email: email } });
+      return user;
+    } catch (err) {
+      return err;
+    }
   }
 }

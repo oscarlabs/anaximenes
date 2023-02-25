@@ -31,8 +31,8 @@ export class UsersService {
     return this.usersRepository.findByUuid(uuid);
   }
 
-  findByEmail(email: string) {
-    return this.usersRepository.findByEmail(email);
+  async findByEmail(email: string) {
+    return await this.usersRepository.findByEmail(email);
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {

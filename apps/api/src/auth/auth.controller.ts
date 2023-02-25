@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -17,10 +17,17 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
-    const user = await this.userService.findByEmail(email);
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    try {
+      const user = await this.userService.findByEmail(email);
 
-    return isMatch;
+      if (!user) throw new UnauthorizedException("Email doesn't exist");
+      console.log('USER', user);
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      return isMatch;
+    } catch (err) {
+      return err;
+    }
   }
 }
