@@ -21,4 +21,9 @@ export class UsersRepository {
     const user = User.findByPk(uuid);
     return user;
   }
+
+  async findByEmail(email: string): Promise<User> {
+    const user = User.findOne({ where: { email: email } });
+    return user;
+  }
 }

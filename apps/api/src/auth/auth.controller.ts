@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Controller, Post, Body } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly userService: UsersService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('register')
+  async register(@Body() createAuthDto: CreateUserDto) {
+    const user = await this.userService.create(createAuthDto);
+    return user;
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
+  @Post('login')
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    const user = await this.userService.findByEmail(email);
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
+    const isMatch = await bcrypt.compare(password, user.password);
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+    return isMatch;
   }
 }

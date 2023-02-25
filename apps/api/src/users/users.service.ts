@@ -3,13 +3,23 @@ import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 // import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto) {
+    const saltOrRounds = 10;
+    const password = await bcrypt.hash(createUserDto.password, saltOrRounds);
+
+    createUserDto = {
+      ...createUserDto,
+      password,
+    };
+
     const user = await this.usersRepository.create(createUserDto);
+
     return user;
   }
 
@@ -17,8 +27,12 @@ export class UsersService {
     return this.usersRepository.findAll();
   }
 
-  findOne(uuid: string) {
+  findById(uuid: string) {
     return this.usersRepository.findByUuid(uuid);
+  }
+
+  findByEmail(email: string) {
+    return this.usersRepository.findByEmail(email);
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {
