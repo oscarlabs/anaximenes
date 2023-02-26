@@ -5,7 +5,9 @@ import { User } from './entities/user.entity';
 export class UsersRepository {
   async create(createUserDto): Promise<User | null> {
     try {
-      const user = await User.create(createUserDto);
+      const user = await (
+        await User.create(createUserDto)
+      ).get({ plain: true });
       return user;
     } catch (err) {
       return err;
@@ -18,13 +20,31 @@ export class UsersRepository {
   }
 
   async findByUuid(uuid: string): Promise<User> {
-    const user = User.findByPk(uuid);
+    const user = (await User.findByPk(uuid)).get({ plain: true });
     return user;
   }
 
   async findByEmail(email: string): Promise<User> {
     try {
-      const user = await User.findOne({ where: { email: email } });
+      const user = await (
+        await User.findOne({
+          where: { email: email },
+          attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        })
+      ).get({ plain: true });
+      return user;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async getUserInformation(email: string): Promise<User> {
+    try {
+      const user = await (
+        await User.findOne({
+          where: { email: email },
+        })
+      ).get({ plain: true });
       return user;
     } catch (err) {
       return err;

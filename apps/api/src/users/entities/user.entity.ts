@@ -1,4 +1,5 @@
 import {
+  BeforeCreate,
   Column,
   CreatedAt,
   DataType,
@@ -63,4 +64,9 @@ export class User extends Model {
     defaultValue: null,
   })
   updatedAt: Date;
+
+  @BeforeCreate
+  static fieldsNormalization(instance: User) {
+    instance.email = instance.email.toLocaleLowerCase();
+  }
 }

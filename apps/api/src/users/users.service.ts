@@ -23,16 +23,20 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return this.usersRepository.findAll();
+  async findAll() {
+    return await this.usersRepository.findAll();
   }
 
-  findById(uuid: string) {
-    return this.usersRepository.findByUuid(uuid);
+  async findById(uuid: string) {
+    return await this.usersRepository.findByUuid(uuid);
   }
 
   async findByEmail(email: string) {
     return await this.usersRepository.findByEmail(email);
+  }
+
+  async getUserInformation(email: string) {
+    return await this.usersRepository.getUserInformation(email);
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {
