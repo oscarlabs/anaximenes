@@ -6,8 +6,10 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { Role } from './users/entities/role.entity';
+import { UserRole } from './users/entities/user-role.entity';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { UsersModule } from './users/users.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      models: [User],
+      models: [User, Role, UserRole],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist'),

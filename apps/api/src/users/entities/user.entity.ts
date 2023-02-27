@@ -1,24 +1,41 @@
 import {
+  AllowNull,
+  AutoIncrement,
   BeforeCreate,
   Column,
   CreatedAt,
   DataType,
+  DeletedAt,
+  HasMany,
+  IsEmail,
   Model,
+  PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { UserRole } from './user-role.entity';
 
 @Table
 export class User extends Model {
+  @PrimaryKey
+  @AutoIncrement
+  @AllowNull(false)
+  @Unique
+  @Column(DataType.INTEGER)
+  id: number;
+
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
     allowNull: false,
     unique: true,
-    primaryKey: true,
+    // primaryKey: true,
   })
   uuid: string;
 
+  @Unique
+  @IsEmail
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -44,6 +61,9 @@ export class User extends Model {
   })
   lastName: string;
 
+  @Column(DataType.DATEONLY)
+  dob: string;
+
   @Column({
     type: DataType.BOOLEAN,
     defaultValue: true,
@@ -64,6 +84,13 @@ export class User extends Model {
     defaultValue: null,
   })
   updatedAt: Date;
+
+  @DeletedAt
+  @Column({ field: 'deletedAt', type: DataType.DATE })
+  deletedAt: Date;
+
+  @HasMany(() => UserRole, 'userId')
+  userRoles: UserRole[];
 
   @BeforeCreate
   static fieldsNormalization(instance: User) {
